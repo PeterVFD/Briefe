@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brief-Generator – HTML-Version</title>
+  <style>
+    :root {
+      --teams: #464EB8;
+      --bg: #f3f2f1;
+      --card: #ffffff;
+      --text: #323130;
+      --muted: #605e5c;
+      --border: #d2d0ce;
+      --success: #27ae60;
+      --warn: #fff3cd;
+      --warn-border: #ffe08a;
+      --search: #fffde7;
+      --search-border: #ffe082;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.08);
+      border-top: 6px solid var(--teams);
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .info {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #3730a3;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .upload-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fafafa;
+    }
+    .box h3 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      color: var(--teams);
+    }
+    .box p {
+      margin: 6px 0 10px 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--teams);
+      margin-bottom: 4px;
+    }
+    .hint {
+      font-weight: 400;
+      color: #888;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    input, textarea, select, button {
+      font: inherit;
+    }
+    input[type="text"], input[type="number"], input[type="date"], select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #c8c6c4;
+      border-radius: 6px;
+      background: #fff;
+    }
+    input[type="file"] {
+      width: 100%;
+    }
+    .search {
+      background: var(--search);
+      border: 2px solid var(--search-border);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .full { grid-column: 1 / -1; }
+    textarea {
+      min-height: 340px;
+      resize: vertical;
+      font-family: Consolas, "Courier New", monospace;
+      background: #fafafa;
+      line-height: 1.4;
+    }
+    .memo-box {
+      background: var(--warn) !important;
+      border: 1px solid var(--warn-border) !important;
+      color: #7c5a00;
+      font-weight: 700;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 700;
+      min-width: 140px;
+    }
+    .btn { background: #e5e7eb; color: #111827; }
+    .btn-primary { background: var(--success); color: #fff; }
+    .btn-mail { background: #e67e22; color: #fff; display: none; }
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      min-height: 18px;
+    }
+    .template-count {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    @media (max-width: 900px) {
+      .grid, .upload-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>✉️ Brief-Generator – HTML-Version</h1>
+      <div class="small">Läuft lokal im Browser</div>
+    </div>
+
+    <div class="info">
+      Diese HTML-Version ersetzt den AutoHotkey-Teil. Vorlagen werden per Browser geladen. Optional kannst du zusätzlich die Statistik-Logdatei laden, damit die Top-3-Vorlagen mit ⭐ markiert werden.
+    </div>
+
+    <div class="upload-row">
+      <div class="box">
+        <h3>1) Vorlagen laden</h3>
+        <p>Wähle deinen Vorlagen-Ordner oder mehrere <strong>.txt</strong>-Dateien aus.</p>
+        <input type="file" id="templateFiles" accept=".txt,text/plain" multiple webkitdirectory />
+      </div>
+      <div class="box">
+        <h3>2) Statistik optional laden</h3>
+        <p>Optional: Lade deine <strong>BriefGenerator_Statistik.log</strong>, damit Favoriten erkannt werden.</p>
+        <input type="file" id="logFile" accept=".log,.txt,text/plain" />
+      </div>
+    </div>
+
+    <label>🔍 Vorlage suchen:</label>
+    <input type="text" id="search" class="search" placeholder="Name tippen..." />
+    <select id="vSelect">
+      <option value="">-- Vorlage wählen --</option>
+    </select>
+    <div class="template-count" id="templateCount">Noch keine Vorlagen geladen.</div>
+
+    <div class="grid">
+      <div>
+        <label>Vorname <span class="hint">[Vorname]</span></label>
+        <input type="text" id="vn" value="Max" />
+      </div>
+      <div>
+        <label>Nachname <span class="hint">[Nachname]</span></label>
+        <input type="text" id="nn" value="Mustermann" />
+      </div>
+      <div>
+        <label>E-Mail <span class="hint">[Email]</span></label>
+        <input type="text" id="em" value="max@mail.de" />
+      </div>
+
+      <div>
+        <label>Rufnummer <span class="hint">[Rufnummer]</span></label>
+        <input type="text" id="tel" value="01701234567" />
+      </div>
+      <div>
+        <label>Eingangsdatum <span class="hint">[Datum_Eingang]</span></label>
+        <input type="date" id="edat" />
+      </div>
+      <div>
+        <label>Frist in Tagen <span class="hint">[Frist]</span></label>
+        <input type="number" id="frist" value="14" />
+      </div>
+
+      <div>
+        <label>Kündigungsdatum <span class="hint">[Enddatum]</span></label>
+        <input type="text" id="kdat" readonly style="background:#f0f0f0;" />
+      </div>
+      <div style="grid-column: span 2;">
+        <label>Thema <span class="hint">[Thema]</span></label>
+        <input type="text" id="th" placeholder="z. B. Vertragsanpassung" />
+      </div>
+
+      <div class="full">
+        <label>💡 Interne Memo (wird nicht kopiert)</label>
+        <input type="text" id="memo" class="memo-box" readonly placeholder="Kein Memo hinterlegt" />
+      </div>
+      <div class="full">
+        <label>Betreffzeile</label>
+        <input type="text" id="betr" style="font-weight:700;" />
+      </div>
+      <div class="full">
+        <label>Ausgabe</label>
+        <textarea id="out" placeholder="Bitte zuerst Vorlagen laden und eine Vorlage wählen..."></textarea>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="resetBtn">Reset</button>
+      <button class="btn-mail" id="mailBtn">In Mail öffnen</button>
+      <button class="btn-primary" id="copyBtn">Kopieren</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    const state = {
+      templates: [],
+      filtered: [],
+      favoriteCounts: {},
+      raw: '',
+      templateName: ''
+    };
+
+    const ids = ['vn','nn','em','tel','edat','frist','th','betr'];
+    const $ = (id) => document.getElementById(id);
+
+    function setStatus(text) {
+      $('status').textContent = text || '';
+    }
+
+    function saveInputs() {
+      const data = {};
+      ids.forEach(id => data[id] = $(id).value);
+      localStorage.setItem('brief_generator_inputs', JSON.stringify(data));
+    }
+
+    function loadInputs() {
+      try {
+        const data = JSON.parse(localStorage.getItem('brief_generator_inputs') || '{}');
+        ids.forEach(id => {
+          if (data[id] != null) $(id).value = data[id];
+        });
+      } catch (e) {}
+    }
+
+    function resetAll() {
+      localStorage.removeItem('brief_generator_inputs');
+      $('vn').value = 'Max';
+      $('nn').value = 'Mustermann';
+      $('em').value = 'max@mail.de';
+      $('tel').value = '01701234567';
+      $('frist').value = '14';
+      $('th').value = '';
+      $('betr').value = '';
+      $('out').value = '';
+      $('memo').value = '';
+      $('search').value = '';
+      $('vSelect').innerHTML = '<option value="">-- Vorlage wählen --</option>';
+      $('templateFiles').value = '';
+      $('logFile').value = '';
+      $('templateCount').textContent = 'Noch keine Vorlagen geladen.';
+      $('mailBtn').style.display = 'none';
+      state.templates = [];
+      state.filtered = [];
+      state.favoriteCounts = {};
+      state.raw = '';
+      state.templateName = '';
+      $('edat').valueAsDate = new Date();
+      updateOutput();
+      setStatus('Zurückgesetzt.');
+    }
+
+    function readFileText(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || '');
+        reader.onerror = () => reject(reader.error);
+        reader.readAsText(file, 'UTF-8');
+      });
+    }
+
+    async function loadLogFile() {
+      const file = $('logFile').files[0];
+      state.favoriteCounts = {};
+      if (!file) return;
+      const content = await readFileText(file);
+      content.split(/\r?\n/).forEach(line => {
+        const name = line.trim();
+        if (!name) return;
+        state.favoriteCounts[name] = (state.favoriteCounts[name] || 0) + 1;
+      });
+    }
+
+    function getTop3Names() {
+      return Object.entries(state.favoriteCounts)
+        .sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0], 'de'))
+        .slice(0, 3)
+        .map(entry => entry[0]);
+    }
+
+    async function loadTemplateFiles() {
+      const files = Array.from($('templateFiles').files || []).filter(f => f.name.toLowerCase().endsWith('.txt'));
+      if (!files.length) {
+        state.templates = [];
+        refreshSelect();
+        $('templateCount').textContent = 'Noch keine Vorlagen geladen.';
+        return;
+      }
+
+      await loadLogFile();
+      const top3 = new Set(getTop3Names());
+      const templates = [];
+
+      for (const file of files) {
+        const text = await readFileText(file);
+        const name = file.name.replace(/\.txt$/i, '');
+        templates.push({
+          name,
+          displayName: `${top3.has(name) ? '⭐ ' : ''}${name}`,
+          data: text
+        });
+      }
+
+      templates.sort((a,b) => a.displayName.localeCompare(b.displayName, 'de'));
+      state.templates = templates;
+      refreshSelect();
+      $('templateCount').textContent = `${templates.length} Vorlage(n) geladen.`;
+      setStatus('Vorlagen erfolgreich geladen.');
+    }
+
+    function refreshSelect() {
+      const term = $('search').value.trim().toLowerCase();
+      const select = $('vSelect');
+      select.innerHTML = '<option value="">-- Vorlage wählen --</option>';
+
+      state.filtered = state.templates.filter(t => !term || t.displayName.toLowerCase().includes(term) || t.name.toLowerCase().includes(term));
+      state.filtered.forEach((tpl, idx) => {
+        const opt = document.createElement('option');
+        opt.value = String(idx);
+        opt.textContent = tpl.displayName;
+        select.appendChild(opt);
+      });
+
+      if (state.filtered.length && term) {
+        select.selectedIndex = 1;
+        loadSelectedTemplate();
+      } else {
+        state.raw = '';
+        state.templateName = '';
+        $('memo').value = '';
+        $('out').value = '';
+        $('betr').value = '';
+        $('mailBtn').style.display = 'none';
+      }
+    }
+
+    function loadSelectedTemplate() {
+      const idx = $('vSelect').value;
+      if (idx === '') return;
+      const tpl = state.filtered[Number(idx)];
+      if (!tpl) return;
+
+      state.templateName = tpl.name;
+      const decoded = tpl.data || '';
+      const memoMatch = decoded.match(/Memo:\s*([^\r\n]+)/i);
+      $('memo').value = memoMatch ? memoMatch[1].trim() : '--- Keine internen Hinweise ---';
+      state.raw = decoded.replace(/Memo:\s*[^\r\n]+\r?\n?/i, '').trim();
+      $('mailBtn').style.display = (/^(APO|WDVL)/i.test(state.templateName)) ? 'inline-block' : 'none';
+      updateOutput();
+      setStatus(`Vorlage geladen: ${state.templateName}`);
+    }
+
+    function updateOutput() {
+      saveInputs();
+      if (!state.raw) {
+        $('kdat').value = '';
+        return;
+      }
+
+      const vn = $('vn').value || '';
+      const nn = $('nn').value || '';
+      const em = $('em').value || '';
+      const tel = $('tel').value || '';
+      const fr = parseInt($('frist').value, 10) || 0;
+      const th = $('th').value || '';
+      const idat = $('edat').value || '';
+
+      let dS = '';
+      let kS = '';
+      if (idat) {
+        const d = new Date(idat + 'T00:00:00');
+        dS = d.toLocaleDateString('de-DE');
+        const k = new Date(d);
+        k.setDate(k.getDate() + fr);
+        kS = k.toLocaleDateString('de-DE');
+      }
+      $('kdat').value = kS;
+
+      if (/^WDVL/i.test(state.templateName)) {
+        $('betr').value = `[${tel}] / ${th || 'Thema'}`;
+      } else if (/^APO/i.test(state.templateName)) {
+        $('betr').value = `Call-Ya / ${tel} / ${state.templateName}`;
+      } else {
+        $('betr').value = dS ? `Antwort auf Ihre Anfrage vom ${dS}` : 'Antwort auf Ihre Anfrage';
+      }
+
+      let text = state.raw;
+      const replacements = {
+        '[Vorname]': vn,
+        '[Nachname]': nn,
+        '[Email]': em,
+        '[Rufnummer]': tel,
+        '[Datum_Eingang]': dS,
+        '[Enddatum]': kS,
+        '[Frist]': String(fr),
+        '[Thema]': th
+      };
+
+      Object.entries(replacements).forEach(([key, value]) => {
+        text = text.split(key).join(value);
+      });
+
+      $('out').value = text;
+    }
+
+    async function copyOutput() {
+      const text = $('out').value || '';
+      if (!text.trim()) {
+        setStatus('Kein Text zum Kopieren vorhanden.');
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          $('out').focus();
+          $('out').select();
+          document.execCommand('copy');
+        }
+        const btn = $('copyBtn');
+        const old = btn.textContent;
+        btn.textContent = 'Kopiert! ✔️';
+        btn.style.background = '#2196F3';
+        setTimeout(() => {
+          btn.textContent = old;
+          btn.style.background = 'var(--success)';
+        }, 1500);
+        setStatus('Text wurde in die Zwischenablage kopiert.');
+      } catch (e) {
+        setStatus('Kopieren ist fehlgeschlagen. Bitte Text manuell markieren.');
+      }
+    }
+
+    function openMail() {
+      const subject = encodeURIComponent($('betr').value || '');
+      const body = encodeURIComponent('Hallo,\n\n' + ($('out').value || ''));
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    function init() {
+      loadInputs();
+      if (!$('edat').value) $('edat').valueAsDate = new Date();
+
+      $('templateFiles').addEventListener('change', loadTemplateFiles);
+      $('logFile').addEventListener('change', loadTemplateFiles);
+      $('search').addEventListener('input', refreshSelect);
+      $('vSelect').addEventListener('change', loadSelectedTemplate);
+      $('copyBtn').addEventListener('click', copyOutput);
+      $('mailBtn').addEventListener('click', openMail);
+      $('resetBtn').addEventListener('click', resetAll);
+      ['vn','nn','em','tel','edat','frist','th'].forEach(id => $(id).addEventListener('input', updateOutput));
+
+      $('search').focus();
+    }
+
+    init();
+  </script>
+</body>
+</html>
